@@ -90,7 +90,7 @@
 		delete this.map;
 		var center = new google.maps.LatLng(lat, lng),
 			myOptions = {
-				zoom: this.zoom, /* zoom level of the map */
+				zoom: this.zoom,
 				center: center,
 				draggable: true,
 				mapTypeId: google.maps.MapTypeId.ROADMAP,
@@ -110,7 +110,7 @@
 		sendAJAX("http://data.cityofmadison.com/resource/svr6-6gvb.json",
 			"GET",
 			function (resp) {
-				if (resp.statusCode() === 200) {
+				if (resp.status === 200) {
 					MadParks.parks = JSON.parse(resp.responseText);
 					for (var i = 0; i < MadParks.parks.length; i++) {
 						MadParks.addToMap(MadParks.parks[i]);
@@ -125,24 +125,26 @@
 		);
 	}
 	MadParks.addToMap = function (obj) {
-		var latlng = new google.maps.LatLng(obj.lat, obj.lng),
+		var latlng = new google.maps.LatLng(obj.location.latitude, obj.location.longitude),
 			options = {
 				map: this.map,
-				center: latlng,
+				position: latlng,
 				clickable: true,
-				html: this.parkInfoOutput(obj)
+				html: this.parkInfoOutput(obj),
+				title: obj.name
 			},
 			marker;
-		marker = new google.maps.Marker(options)
+		marker = new google.maps.Marker(options);
 		google.maps.event.addListener(marker, 'click', this.showInfo);
 	}
 	MadParks.showInfo = function (event) {
 		MadParks.infoWindow.setContent(this.html);
-		MadParks.infoWindow.setPosition(this.center);
+		MadParks.infoWindow.setPosition(this.position);
 		MadParks.infoWindow.open(MadParks.map);
 	}
 	MadParks.parkInfoOutput = function (park) {
-		return "Name: " + park.name + "<BR>Address: " + park.location.address + "<BR>Lat/Lng: " + park.location.lat + ", " + park.location.lng + "<BR>HereNow: " + park.hereNow.count;
+		var output = "Name: " + park.name + "<BR>Address: " + park.address + "<BR>Lat/Lng: " + park.location.latitude + ", " + park.location.longitude;
+		return output;
 	}
 	function var_dump(obj) {
 		var str = "",
@@ -170,6 +172,9 @@
 		if (xhReq.readyState === 4 ) return xhReq;
 		xhReq.send(data);
 	}
+	Element.prototype.hasClass = function (name) {
+		return this.className.indexOf(name) !== -1;
+	}
 	Element.prototype.removeClass = function (name) {
 		if (this.hasClass(name)) {
 			this.className = this.className.replace(name, '');
@@ -195,7 +200,7 @@
 		} else { //or just ask
 			MadParks.manualLocation();
 		}
-	}
+	});
 	</script>
 	</body>
 </html>
