@@ -160,7 +160,7 @@
           MadParks.parks = JSON.parse(resp.responseText);
           for (i = 0; i < $filters.length; i++) {
             if ($filters[i].checked) {
-              filters.push($filters[i].value);
+                filters.push($filters[i].value);
             }
           }
           MadParks.filters = filters;
@@ -169,9 +169,14 @@
               validParks = MadParks.parks.filter(function (park) {
                 goodToGo = true;
                 for (i = 0; i < MadParks.filters.length; i++) {
-                  if (!park[MadParks.filters[i]]) {
-                    goodToGo = false;
-                    return false;
+                  if (MadParks.filters[i] === "shelter") {
+                    if (!park["non_reservable_shelter"] && !park["reservable_shelter"]) {
+                      goodToGo = false;
+                      return false;
+                    }
+                  } else if (!park[MadParks.filters[i]]) {
+                      goodToGo = false;
+                      return false;
                   }
                 }
                 return goodToGo;
@@ -180,7 +185,12 @@
               validParks = MadParks.parks.filter(function (park) {
                 goodToGo = false;
                 for (i = 0; i < MadParks.filters.length; i++) {
-                  if (park[MadParks.filters[i]]) {
+                  if (MadParks.filters[i] === "shelter") {
+                    if (park["non_reservable_shelter"] || park["reservable_shelter"]) {
+                      goodToGo = true;
+                      return true;
+                    }
+                  } else if (park[MadParks.filters[i]]) {
                     goodToGo = true;
                     return true;
                   }
@@ -315,7 +325,6 @@
   }
   document.addEventListener("DOMContentLoaded", function (e) {
     "use strict";
-    var touchEvent = ('ontouchstart' in window) ? 'touchstart' : 'click';
     $loading = document.getElementById('loading');
     $map = document.getElementById('map');
     $and = document.getElementById('and');
@@ -327,7 +336,7 @@
     } else { //or just ask
       MadParks.manualLocation();
     }
-    document.getElementsByTagName('input').addEventListener(touchEvent, function (e) {
+    document.getElementsByTagName('input').addEventListener('change', function (e) {
       MadParks.initGMap(MadParks.currentPosition.lat, MadParks.currentPosition.lng);
     });
   });
