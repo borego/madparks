@@ -56,7 +56,7 @@ var $loading,
           MadParks.parks = JSON.parse(resp.responseText);
           for (i = 0; i < $filters.length; i++) {
             if ($filters[i].checked) {
-              filters.push($filters[i].value);
+                filters.push($filters[i].value);
             }
           }
           MadParks.filters = filters;
@@ -65,9 +65,14 @@ var $loading,
               validParks = MadParks.parks.filter(function (park) {
                 goodToGo = true;
                 for (i = 0; i < MadParks.filters.length; i++) {
-                  if (!park[MadParks.filters[i]]) {
-                    goodToGo = false;
-                    return false;
+                  if (MadParks.filters[i] === "shelter") {
+                    if (!park["non_reservable_shelter"] && !park["reservable_shelter"]) {
+                      goodToGo = false;
+                      return false;
+                    }
+                  } else if (!park[MadParks.filters[i]]) {
+                      goodToGo = false;
+                      return false;
                   }
                 }
                 return goodToGo;
@@ -76,7 +81,12 @@ var $loading,
               validParks = MadParks.parks.filter(function (park) {
                 goodToGo = false;
                 for (i = 0; i < MadParks.filters.length; i++) {
-                  if (park[MadParks.filters[i]]) {
+                  if (MadParks.filters[i] === "shelter") {
+                    if (park["non_reservable_shelter"] || park["reservable_shelter"]) {
+                      goodToGo = true;
+                      return true;
+                    }
+                  } else if (park[MadParks.filters[i]]) {
                     goodToGo = true;
                     return true;
                   }
