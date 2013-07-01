@@ -221,7 +221,6 @@ var $loading,
   }
   document.addEventListener("DOMContentLoaded", function (e) {
     "use strict";
-    var touchEvent = ('ontouchstart' in window) ? 'touchstart' : 'click';
     $loading = document.getElementById('loading');
     $map = document.getElementById('map');
     $and = document.getElementById('and');
@@ -233,7 +232,7 @@ var $loading,
     } else { //or just ask
       MadParks.manualLocation();
     }
-    document.getElementsByTagName('input').addEventListener(touchEvent, function (e) {
+    document.getElementsByTagName('input').addEventListener('change', function (e) {
       MadParks.initGMap(MadParks.currentPosition.lat, MadParks.currentPosition.lng);
     });
   });
