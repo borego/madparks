@@ -162,7 +162,9 @@ var $loading,
     if (park.volleyball) {
       output += "Volleyball, ";
     }
-    return output.substr(0, output.length - 2);
+    output = output.substr(0, output.length - 2)
+    output += "<br/><a target='_blank' href='http://maps.google.com/maps?saddr=current+location&daddr=" + park.address + "'>Link to Directions</a>";
+    return output;
   }
   function var_dump(obj) {
     var str = "",
